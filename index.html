@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Carteira Global · Extrato</title>
 </head>
+
 <body>
 
   <header>
@@ -12,24 +14,22 @@
     <p>Conversor de moedas e controle de gastos</p>
   </header>
   <main>
-    <section id="page-extrato">
+    <section>
 
-      <form id="expense-form">
-        <div class="field">
+      <form>
+        <div>
           <label for="exp-name">Nome do gasto</label>
           <input type="text" id="exp-name" name="exp-name">
-          <span class="error-msg" id="err-name"></span>
         </div>
 
-        <div class="field">
-          <label for="exp-value">Valor</label>
-          <input type="text" id="exp-value" name="exp-value" inputmode="decimal">
-          <span class="error-msg" id="err-value"></span>
+        <div>
+          <label for="valorGasto">Valor</label>
+          <input type="text" id="valorGasto">
         </div>
 
-        <div class="field">
-          <label for="exp-currency">Moeda</label>
-          <select id="exp-currency" name="exp-currency">
+        <div>
+          <label for="moeda">Moeda</label>
+          <select id="moeda" name="moeda">
             <option value="BRL">Real · BRL</option>
             <option value="USD">Dólar · USD</option>
             <option value="EUR">Euro · EUR</option>
@@ -37,19 +37,19 @@
           </select>
         </div>
 
-        <div class="field">
-          <label for="exp-cat">Categoria</label>
-          <select id="exp-cat" name="exp-cat">
+        <div>
+          <label for="gastos">Categoria</label>
+          <select id="gastos">
             <option value="Alimentação">Alimentação</option>
             <option value="Transporte">Transporte</option>
             <option value="Lazer">Lazer</option>
           </select>
         </div>
-        <button type="submit">Adicionar</button>
+        <button type="button" onclick="calculoGastos()">Adicionar</button>
       </form>
-      <div id="expense-list">
-      </div>
+      <script src="app/script.js"></script>
     </section>
   </main>
 </body>
+
 </html>
