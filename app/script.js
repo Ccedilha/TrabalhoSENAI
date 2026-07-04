@@ -1,79 +1,45 @@
-let moeda = document.getElementById("moeda").value;
-let url = `https://economia.awesomeapi.com.br/last/${moeda}-BRL`
-let gasto = document.getElementById("gastos").value;
+async function calculoGastos() {
+    const categoriaGasto = document.getElementById("categoriaGasto").value;
+    if (!categoriaGasto) {
+        alert("Por favor, selecione uma categoria de gasto.");
+        return;
+    }
+    const nome = document.getElementById("nomeGasto").value;
+    if (!nome) {
+        alert("Por favor, informe o nome do gasto.");
+        return;
+    }
+    const valor = Number(document.getElementById("valorGasto").value);
+    const moeda = document.getElementById("moeda").value;
 
-const salvarGasto = []
-function calculoGastos() {
-    let valorGasto = document.getElementById("valorGasto").value;
-    let moeda = document.getElementById("moeda").value;
-    fetch(url)
-        .then(function (resposta) {
-            return resposta.json();
-        })
-    switch (moeda) {
-        case "USD":
-            calculoUSDBRL(moeda,valorGasto)
-            break;
-        case "BRL":
-            console.log("teste")
-        case "EUR":
-            console.log("teste 2")
-        case "BTC":
-            console.log("teste 3")
+    let valorEmReais = valor;
+    if (moeda !== "BRL") {
+        const resposta = await fetch(`https://economia.awesomeapi.com.br/last/${moeda}-BRL`);
+        const dados = await resposta.json();
+        valorEmReais = valor * dados[`${moeda}BRL`].bid;
     }
 
-
+    const historico = JSON.parse(localStorage.getItem("historico")) || [];
+    historico.push({ Categoria: categoriaGasto, Valor_Original: valor, gasto: nome, moeda, valorEmReais });
+    localStorage.setItem("historico", JSON.stringify(historico));
 }
 
+async function exibirTotais() {
+    if (!document.getElementById("totalReal")) return;
 
-function calculoUSDBRL(moeda,valorGasto) {
+    const historico = JSON.parse(localStorage.getItem("historico")) || [];
+    let totalReais = 0;
+    for (let i = 0; i < historico.length; i++) {
+        totalReais += historico[i].valorEmReais;
+    }
 
-    fetch(url)
-        .then(function (resposta) {
-            return resposta.json();
-        })
-        .then(function (dados) {
-            if (dados.erro) {
-                alert("...")
-                return;
-            }
-            let chaveMoeda = `${moeda}BRL`
-            let cambio = dados[chaveMoeda]["bid"];
-            let resultadoReais = Number(valorGasto) * Number(cambio)
-            console.log(resultadoReais)
-            console.log(document.getElementById("totalDolar"))
-            document.getElementById("totalDolar").innerText = resultadoReais
-            salvarHistorico("teste", resultadoReais)
-        })
+    const resposta = await fetch("https://economia.awesomeapi.com.br/last/USD-BRL,EUR-BRL,BTC-BRL");
+    const dados = await resposta.json();
+
+    document.getElementById("totalReal").innerText = totalReais.toFixed(2);
+    document.getElementById("totalDolar").innerText = (totalReais / dados.USDBRL.bid).toFixed(2);
+    document.getElementById("totalEuro").innerText = (totalReais / dados.EURBRL.bid).toFixed(2);
+    document.getElementById("totalBitcoin").innerText = (totalReais / dados.BTCBRL.bid).toFixed(8);
 }
 
-function salvarHistorico(nomeDoGasto, resultadoReais) {
-    let novoSalvarGasto = {
-        gasto: nomeDoGasto,
-        valor: resultadoReais
-    };
-    salvarGasto.push(novoSalvarGasto);
-    localStorage.setItem("historico", JSON.stringify(salvarGasto))
-
-    console.log(salvarGasto);
-}
-// if (moeda === "BRL") {
-//     const cambio = 1
-//     let resultadoReais = Number(valorGasto) * Number(cambio)
-//     console.log(resultadoReais)
-//     return;
-// }
-// fetch(`https://economia.awesomeapi.com.br/last/${moeda}-BRL`)
-//     .then(function (resposta) {
-//         return resposta.json();
-//     })
-//     .then(function (dados) {
-//         if (dados.erro) {
-//             alert("...")
-//             return;
-//         }
-//         const chaveMoeda = `${moeda}BRL`
-//         let cambio = dados[chaveMoeda]["bid"];
-//         let resultadoReais = Number(valorGasto) * Number(cambio)
-//         console.log(resultadoReais)
-//     })
+exibirTotais();
