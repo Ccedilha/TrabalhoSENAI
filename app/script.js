@@ -5,7 +5,8 @@ const cambioPadrao = {
 };
 
 async function calculoGastos() {
-    const nome = document.getElementById("exp-name").value;
+    const nome = document.getElementById("nomeGasto").value;
+    const categoria = document.getElementById("categoriaGasto").value;
     const valor = Number(document.getElementById("valorGasto").value);
     const moeda = document.getElementById("moeda").value;
 
@@ -25,7 +26,7 @@ async function calculoGastos() {
     }
 
     const historico = JSON.parse(localStorage.getItem("historico")) || [];
-    historico.push({ gasto: nome, moeda, valorEmReais });
+    historico.push({ gasto: nome, categoria, moeda, valorEmReais });
     localStorage.setItem("historico", JSON.stringify(historico));
 }
 
